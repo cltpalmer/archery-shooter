@@ -123,6 +123,7 @@ function resetBall() {
             { x: 700, y: 250, points: 200, vx: -2, vy: -1 },
             { x: 750, y: 400, points: 100, vx: 1, vy: -2 }
         );
+        boss.active = false;
     }
 }
 
