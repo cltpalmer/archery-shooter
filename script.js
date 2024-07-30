@@ -9,10 +9,10 @@ targetImage.src = 'https://i.imgur.com/ivm90b4.png';
 const bossImage = new Image();
 bossImage.src = 'https://i.imgur.com/ZkvAql8.png';
 
-const targets = [
-    { x: 650, y: 100, points: 300, vx: 2, vy: 1 },
-    { x: 700, y: 250, points: 200, vx: -2, vy: -1 },
-    { x: 750, y: 400, points: 100, vx: 1, vy: -2 }
+let targets = [
+    { x: 650, y: 100, points: 300, vx: 2, vy: 1, width: 50, height: 50 },
+    { x: 700, y: 250, points: 200, vx: -2, vy: -1, width: 50, height: 50 },
+    { x: 750, y: 400, points: 100, vx: 1, vy: -2, width: 50, height: 50 }
 ];
 
 let score = 0;
@@ -47,7 +47,7 @@ function draw() {
 
     // Draw targets
     targets.forEach(target => {
-        ctx.drawImage(targetImage, target.x, target.y, 50, 50);
+        ctx.drawImage(targetImage, target.x, target.y, target.width, target.height);
         ctx.fillStyle = 'white';
         ctx.font = '20px Arial';
         ctx.fillText(target.points, target.x + 15, target.y - 10);
@@ -57,8 +57,8 @@ function draw() {
         target.y += target.vy;
 
         // Check for boundaries and reverse direction if needed
-        if (target.x < 0 || target.x + 50 > canvas.width) target.vx *= -1;
-        if (target.y < 0 || target.y + 50 > canvas.height) target.vy *= -1;
+        if (target.x < 0 || target.x + target.width > canvas.width) target.vx *= -1;
+        if (target.y < 0 || target.y + target.height > canvas.height) target.vy *= -1;
     });
 
     // Draw and update bosses
@@ -81,8 +81,8 @@ function draw() {
 
     // Check for collisions with targets
     targets.forEach((target, index) => {
-        if (ball.x > target.x && ball.x < target.x + 50 &&
-            ball.y > target.y && ball.y < target.y + 50) {
+        if (ball.x > target.x && ball.x < target.x + target.width &&
+            ball.y > target.y && ball.y < target.y + target.height) {
             score += target.points;
             targets.splice(index, 1);
             resetBall();
@@ -138,17 +138,26 @@ function resetGame() {
     score = 0;
     balls = 5;
     time = 25; // Reset time limit
-    targets.length = 0;
+    targets = [
+        { x: 650, y: 100, points: 300, vx: 2, vy: 1, width: 50, height: 50 },
+        { x: 700, y: 250, points: 200, vx: -2, vy: -1, width: 50, height: 50 },
+        { x: 750, y: 400, points: 100, vx: 1, vy: -2, width: 50, height: 50 }
+    ];
     bosses.length = 0;
-    targets.push(
-        { x: 650, y: 100, points: 300, vx: 2, vy: 1 },
-        { x: 700, y: 250, points: 200, vx: -2, vy: -1 },
-        { x: 750, y: 400, points: 100, vx: 1, vy: -2 }
-    );
 }
 
 function addBoss() {
     bosses.push({ x: 100, y: 50, width: 200, height: 200, vx: 2, vy: 1, active: true });
+}
+
+function addRandomTarget() {
+    const size = Math.random() * 30 + 20;
+    const points = Math.floor(size * 10);
+    const x = Math.random() * (canvas.width - size);
+    const y = Math.random() * (canvas.height - size);
+    const vx = (Math.random() - 0.5) * 4;
+    const vy = (Math.random() - 0.5) * 4;
+    targets.push({ x, y, points, vx, vy, width: size, height: size });
 }
 
 canvas.addEventListener('mousedown', (e) => {
@@ -163,16 +172,23 @@ canvas.addEventListener('mousedown', (e) => {
     balls--;
 });
 
-setInterval(() => {
-    if (shooting) {
-        time--;
-    }
-}, 1000);
+let bossInterval = 3000; // Initial interval for the first boss
 
 setInterval(() => {
     if (shooting) {
-        addBoss();
+        time--;
+        addRandomTarget();
     }
-}, 5000);
+}, 1000);
+
+function spawnBosses() {
+    if (shooting) {
+        addBoss();
+        bossInterval += 2000; // Increase the interval by 2 seconds after each boss
+        setTimeout(spawnBosses, bossInterval);
+    }
+}
+
+setTimeout(spawnBosses, bossInterval);
 
 draw();
