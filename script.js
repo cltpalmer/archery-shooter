@@ -10,9 +10,9 @@ const bossImage = new Image();
 bossImage.src = 'https://i.imgur.com/FGizuyN.gif';
 
 const targets = [
-    { x: 650, y: 100, points: 300 },
-    { x: 700, y: 250, points: 200 },
-    { x: 750, y: 400, points: 100 }
+    { x: 650, y: 100, points: 300, vx: 2, vy: 1 },
+    { x: 700, y: 250, points: 200, vx: -2, vy: -1 },
+    { x: 750, y: 400, points: 100, vx: 1, vy: -2 }
 ];
 
 let score = 0;
@@ -23,7 +23,7 @@ let angle = 0;
 let velocity = 0;
 let ball = { x: 100, y: 500, vx: 0, vy: 0 };
 
-let boss = { x: -100, y: 200, width: 100, height: 100, speed: 2, direction: 1 };
+let boss = { x: -100, y: 200, width: 100, height: 100, speed: 2, direction: 1, active: false };
 
 const scoreDisplay = document.getElementById('score');
 const ballsDisplay = document.getElementById('balls');
@@ -51,15 +51,25 @@ function draw() {
         ctx.fillStyle = 'white';
         ctx.font = '20px Arial';
         ctx.fillText(target.points, target.x + 15, target.y - 10);
+
+        // Move targets
+        target.x += target.vx;
+        target.y += target.vy;
+
+        // Check for boundaries and reverse direction if needed
+        if (target.x < 0 || target.x + 50 > canvas.width) target.vx *= -1;
+        if (target.y < 0 || target.y + 50 > canvas.height) target.vy *= -1;
     });
 
-    // Draw boss
-    ctx.drawImage(bossImage, boss.x, boss.y, boss.width, boss.height);
-
-    // Update boss position
-    boss.x += boss.speed * boss.direction;
-    if (boss.x + boss.width > canvas.width || boss.x < 0) {
-        boss.direction *= -1;
+    // Draw boss if active
+    if (boss.active) {
+        ctx.drawImage(bossImage, boss.x, boss.y, boss.width, boss.height);
+        
+        // Update boss position
+        boss.x += boss.speed * boss.direction;
+        if (boss.x + boss.width > canvas.width || boss.x < 0) {
+            boss.direction *= -1;
+        }
     }
 
     // Update the ball position if shooting
@@ -80,7 +90,7 @@ function draw() {
     });
 
     // Check for collisions with boss
-    if (ball.x > boss.x && ball.x < boss.x + boss.width &&
+    if (boss.active && ball.x > boss.x && ball.x < boss.x + boss.width &&
         ball.y > boss.y && ball.y < boss.y + boss.height) {
         resetBall();
     }
@@ -109,9 +119,9 @@ function resetBall() {
         balls = 5;
         time = 0;
         targets.push(
-            { x: 650, y: 100, points: 300 },
-            { x: 700, y: 250, points: 200 },
-            { x: 750, y: 400, points: 100 }
+            { x: 650, y: 100, points: 300, vx: 2, vy: 1 },
+            { x: 700, y: 250, points: 200, vx: -2, vy: -1 },
+            { x: 750, y: 400, points: 100, vx: 1, vy: -2 }
         );
     }
 }
@@ -126,6 +136,11 @@ canvas.addEventListener('mousedown', (e) => {
     ball.vy = velocity * Math.sin(angle);
     shooting = true;
     balls--;
+
+    // Activate boss as soon as the first ball is shot
+    if (!boss.active) {
+        boss.active = true;
+    }
 });
 
 setInterval(() => {
