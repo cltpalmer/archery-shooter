@@ -1,0 +1,39 @@
+body {
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #000;
+    color: #fff;
+    font-family: Arial, sans-serif;
+}
+
+#game-container {
+    position: relative;
+}
+
+#gameCanvas {
+    background-color: #000;
+    border: 1px solid #fff;
+}
+
+#score, #time, #balls {
+    position: absolute;
+    font-size: 20px;
+}
+
+#score {
+    top: 10px;
+    right: 10px;
+}
+
+#time {
+    top: 10px;
+    left: 10px;
+}
+
+#balls {
+    bottom: 10px;
+    left: 10px;
+}
