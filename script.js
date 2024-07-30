@@ -23,7 +23,8 @@ let angle = 0;
 let velocity = 0;
 let ball = { x: 100, y: 500, vx: 0, vy: 0 };
 
-let boss = { x: 100, y: 50, width: 150, height: 150, vx: 2, vy: 1, active: false };
+// Adjust the initial size to match the yellow square
+let boss = { x: 100, y: 50, width: 200, height: 200, vx: 2, vy: 1, active: false };
 
 const scoreDisplay = document.getElementById('score');
 const ballsDisplay = document.getElementById('balls');
@@ -92,6 +93,9 @@ function draw() {
     // Check for collisions with boss
     if (boss.active && ball.x > boss.x && ball.x < boss.x + boss.width &&
         ball.y > boss.y && ball.y < boss.y + boss.height) {
+        // Grow the boss slightly each time it is hit
+        boss.width *= 1.1;
+        boss.height *= 1.1;
         resetBall();
     }
 
@@ -124,6 +128,8 @@ function resetBall() {
             { x: 750, y: 400, points: 100, vx: 1, vy: -2 }
         );
         boss.active = false;
+        boss.width = 200;  // Reset boss size
+        boss.height = 200; // Reset boss size
     }
 }
 
