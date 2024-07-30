@@ -23,7 +23,7 @@ let angle = 0;
 let velocity = 0;
 let ball = { x: 100, y: 500, vx: 0, vy: 0 };
 
-let boss = { x: -100, y: 200, width: 150, height: 150, speed: 2, direction: 1, active: false };
+let boss = { x: 100, y: 50, width: 150, height: 150, vx: 2, vy: 1, active: false };
 
 const scoreDisplay = document.getElementById('score');
 const ballsDisplay = document.getElementById('balls');
@@ -66,10 +66,10 @@ function draw() {
         ctx.drawImage(bossImage, boss.x, boss.y, boss.width, boss.height);
         
         // Update boss position
-        boss.x += boss.speed * boss.direction;
-        if (boss.x + boss.width > canvas.width || boss.x < 0) {
-            boss.direction *= -1;
-        }
+        boss.x += boss.vx;
+        boss.y += boss.vy;
+        if (boss.x + boss.width > canvas.width || boss.x < 0) boss.vx *= -1;
+        if (boss.y + boss.height > canvas.height || boss.y < 0) boss.vy *= -1;
     }
 
     // Update the ball position if shooting
