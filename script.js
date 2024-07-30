@@ -23,7 +23,7 @@ let angle = 0;
 let velocity = 0;
 let ball = { x: 100, y: 500, vx: 0, vy: 0 };
 
-let boss = { x: -100, y: 200, width: 100, height: 100, speed: 2, direction: 1, active: false };
+let boss = { x: -100, y: 200, width: 150, height: 150, speed: 2, direction: 1, active: false };
 
 const scoreDisplay = document.getElementById('score');
 const ballsDisplay = document.getElementById('balls');
