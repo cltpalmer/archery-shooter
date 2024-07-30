@@ -7,7 +7,7 @@ const targetImage = new Image();
 targetImage.src = 'https://i.imgur.com/ivm90b4.png';
 
 const bossImage = new Image();
-bossImage.src = 'https://i.imgur.com/FGizuyN.gif';
+bossImage.src = 'https://i.imgur.com/ZkvAql8.png';
 
 const targets = [
     { x: 650, y: 100, points: 300, vx: 2, vy: 1 },
