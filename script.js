@@ -6,6 +6,9 @@ canvas.height = 600;
 const targetImage = new Image();
 targetImage.src = 'https://i.imgur.com/ivm90b4.png';
 
+const bossImage = new Image();
+bossImage.src = 'https://i.imgur.com/FGizuyN.gif';
+
 const targets = [
     { x: 650, y: 100, points: 300 },
     { x: 700, y: 250, points: 200 },
@@ -19,6 +22,8 @@ let shooting = false;
 let angle = 0;
 let velocity = 0;
 let ball = { x: 100, y: 500, vx: 0, vy: 0 };
+
+let boss = { x: -100, y: 200, width: 100, height: 100, speed: 2, direction: 1 };
 
 const scoreDisplay = document.getElementById('score');
 const ballsDisplay = document.getElementById('balls');
@@ -48,6 +53,15 @@ function draw() {
         ctx.fillText(target.points, target.x + 15, target.y - 10);
     });
 
+    // Draw boss
+    ctx.drawImage(bossImage, boss.x, boss.y, boss.width, boss.height);
+
+    // Update boss position
+    boss.x += boss.speed * boss.direction;
+    if (boss.x + boss.width > canvas.width || boss.x < 0) {
+        boss.direction *= -1;
+    }
+
     // Update the ball position if shooting
     if (shooting) {
         ball.x += ball.vx;
@@ -64,6 +78,12 @@ function draw() {
             resetBall();
         }
     });
+
+    // Check for collisions with boss
+    if (ball.x > boss.x && ball.x < boss.x + boss.width &&
+        ball.y > boss.y && ball.y < boss.y + boss.height) {
+        resetBall();
+    }
 
     // Check for out of bounds
     if (ball.y > canvas.height || ball.x > canvas.width || ball.x < 0) {
